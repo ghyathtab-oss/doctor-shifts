@@ -6,62 +6,71 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-/* ====== RESET ====== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* RESET */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: "Cairo", sans-serif;
-  background: #f4f7fb;
+  background: #eef3f8;
   padding: 25px;
 }
 
-/* ====== HEADER ====== */
+/* HEADER */
 h2 {
   text-align: center;
-  font-size: 30px;
-  font-weight: 800;
+  font-size: 34px;
+  font-weight: 900;
   color: #0a3d62;
-  margin-bottom: 30px;
-  letter-spacing: -1px;
+  margin-bottom: 35px;
 }
 
-/* ====== CARD LIST ====== */
+/* MAIN CARDS */
 .card {
   background: white;
-  padding: 20px;
-  margin: 14px 0;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  padding: 25px;
+  margin: 18px 0;
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.10);
   cursor: pointer;
   transition: 0.25s ease;
-  border-right: 6px solid #0a3d62;
+  border-right: 10px solid #0a3d62;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.15);
+}
+
+.avatar {
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  background: #d0e6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 45px;
+  color: #0a3d62;
+  flex-shrink: 0;
 }
 
 .card strong {
-  font-size: 20px;
+  font-size: 24px;
   color: #0a3d62;
+  font-weight: 800;
 }
 
-/* ====== SHIFT CARD ====== */
+/* SHIFT CARDS */
 .shift-card {
   background: white;
-  padding: 18px;
-  margin: 12px 0;
-  border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.05);
-  border-right: 6px solid #1e90ff;
+  padding: 22px;
+  margin: 16px 0;
+  border-radius: 16px;
+  box-shadow: 0 5px 16px rgba(0,0,0,0.08);
+  border-right: 8px solid #1e90ff;
   transition: 0.2s ease;
 }
 
@@ -70,21 +79,21 @@ h2 {
 }
 
 .shift-card strong {
-  font-size: 18px;
+  font-size: 20px;
   color: #0a3d62;
 }
 
-/* ====== BACK BUTTON ====== */
+/* BACK BUTTON */
 .back-btn {
   background: #1e90ff;
   color: white;
-  padding: 12px 20px;
+  padding: 14px 22px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 20px;
   cursor: pointer;
-  font-size: 17px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   transition: 0.2s ease;
 }
 
@@ -92,17 +101,9 @@ h2 {
   background: #0f6fcc;
 }
 
-/* ====== LISTS ====== */
-ul {
-  margin-top: 8px;
-  padding-left: 20px;
-}
-
-li {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 4px;
-}
+/* LISTS */
+ul { margin-top: 8px; padding-left: 20px; }
+li { font-size: 17px; color: #333; margin-bottom: 4px; }
 </style>
 </head>
 
@@ -115,6 +116,25 @@ li {
 
 <script>
 let data = [];
+
+/* قاعدة بيانات أسماء */
+const femaleNames = [
+  "فاطمة","سارة","ريم","نور","هبة","مها","رنا","لين","شهد","مريم","بتول","فرح","سلمى"
+];
+
+const maleNames = [
+  "غياث","عمر","أحمد","محمد","عبد","مصطفى","شاكر","ريان","أمير","قصاب","دهان","وفائي","كلارجي"
+];
+
+/* تحديد الجنس */
+function getAvatar(name) {
+  const first = name.split(" ")[0];
+
+  if (femaleNames.includes(first)) return "👩‍⚕️";
+  if (maleNames.includes(first)) return "👨‍⚕️";
+
+  return "🧑‍⚕️"; // محايد
+}
 
 async function loadExcel() {
   const file = await fetch('shifts.xlsx');
@@ -137,7 +157,10 @@ function showResidents() {
   names.forEach(name => {
     const card = document.createElement('div');
     card.className = "card";
-    card.innerHTML = `<strong>${name}</strong> <span style="color:#1e90ff;font-size:22px;">›</span>`;
+    card.innerHTML = `
+      <div class="avatar">${getAvatar(name)}</div>
+      <strong>${name}</strong>
+    `;
     card.onclick = () => showShifts(name);
     list.appendChild(card);
   });
