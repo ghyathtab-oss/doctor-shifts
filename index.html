@@ -2,138 +2,331 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>مناوبات السنة الأولى</title>
+<title>لوحة مناوبات المقيمين</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-/* RESET */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: "Cairo", sans-serif;
-  background: #eef3f8;
-  padding: 25px;
+  background: #0f172a; /* خلفية داكنة احترافية */
+  color: #e5e7eb;
 }
 
-/* HEADER */
-h2 {
-  text-align: center;
-  font-size: 34px;
-  font-weight: 900;
-  color: #0a3d62;
-  margin-bottom: 35px;
-}
-
-/* MAIN CARDS */
-.card {
-  background: white;
-  padding: 25px;
-  margin: 18px 0;
-  border-radius: 20px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.10);
-  cursor: pointer;
-  transition: 0.25s ease;
-  border-right: 10px solid #0a3d62;
+/* شريط علوي */
+.topbar {
+  background: #020617;
+  padding: 16px 28px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  border-bottom: 1px solid #1f2937;
+}
+
+.topbar-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #e5e7eb;
+}
+
+.topbar-badge {
+  background: #1d4ed8;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+/* الحاوية الرئيسية */
+.container {
+  padding: 24px 28px 40px;
+}
+
+/* عنوان رئيسي */
+h2 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #e5e7eb;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 24px;
+}
+
+/* شبكة البطاقات */
+#list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+/* بطاقة مقيم */
+.card {
+  background: radial-gradient(circle at top left, #1d4ed8 0, #020617 55%);
+  border-radius: 18px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.55);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.22s ease;
+  border: 1px solid rgba(148,163,184,0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.15);
+  box-shadow: 0 26px 60px rgba(0,0,0,0.75);
+  border-color: #60a5fa;
 }
 
+/* رأس البطاقة */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Avatar */
 .avatar {
-  width: 75px;
-  height: 75px;
-  border-radius: 50%;
-  background: #d0e6ff;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 45px;
-  color: #0a3d62;
-  flex-shrink: 0;
+  font-size: 32px;
+  border: 2px solid rgba(191,219,254,0.7);
 }
 
-.card strong {
-  font-size: 24px;
-  color: #0a3d62;
+/* اسم المقيم */
+.card-name {
+  font-size: 18px;
   font-weight: 800;
+  color: #f9fafb;
 }
 
-/* SHIFT CARDS */
+/* شارة السنة */
+.card-year {
+  font-size: 12px;
+  color: #cbd5f5;
+}
+
+/* شريط أسفل البطاقة */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.card-tag {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.8);
+  color: #e5e7eb;
+  border: 1px solid rgba(148,163,184,0.5);
+}
+
+.card-count {
+  font-size: 12px;
+  color: #cbd5f5;
+}
+
+/* تفاصيل المقيم */
+#details {
+  margin-top: 18px;
+}
+
+/* زر الرجوع */
+.back-btn {
+  background: #1d4ed8;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 999px;
+  margin-bottom: 18px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 10px 25px rgba(37,99,235,0.55);
+  transition: 0.18s ease;
+}
+
+.back-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* شبكة المناوبات */
+.shifts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* بطاقة مناوبة */
 .shift-card {
-  background: white;
-  padding: 22px;
-  margin: 16px 0;
+  background: #020617;
   border-radius: 16px;
-  box-shadow: 0 5px 16px rgba(0,0,0,0.08);
-  border-right: 8px solid #1e90ff;
+  padding: 16px 16px 14px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 14px 32px rgba(0,0,0,0.65);
   transition: 0.2s ease;
 }
 
 .shift-card:hover {
-  transform: scale(1.01);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.85);
 }
 
-.shift-card strong {
-  font-size: 20px;
-  color: #0a3d62;
+/* شريط علوي للمناوبة */
+.shift-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-/* BACK BUTTON */
-.back-btn {
-  background: #1e90ff;
-  color: white;
-  padding: 14px 22px;
-  border: none;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  font-size: 18px;
+.shift-date {
+  font-size: 14px;
   font-weight: 700;
-  transition: 0.2s ease;
+  color: #e5e7eb;
 }
 
-.back-btn:hover {
-  background: #0f6fcc;
+.shift-dept {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
 }
 
-/* LISTS */
-ul { margin-top: 8px; padding-left: 20px; }
-li { font-size: 17px; color: #333; margin-bottom: 4px; }
+/* ألوان الأقسام */
+.shift-dept.er {
+  background: rgba(248,113,113,0.12);
+  color: #fecaca;
+  border: 1px solid rgba(248,113,113,0.6);
+}
+
+.shift-dept.icu {
+  background: rgba(56,189,248,0.12);
+  color: #bae6fd;
+  border: 1px solid rgba(56,189,248,0.6);
+}
+
+.shift-dept.ward {
+  background: rgba(52,211,153,0.12);
+  color: #bbf7d0;
+  border: 1px solid rgba(52,211,153,0.6);
+}
+
+.shift-dept.cold {
+  background: rgba(148,163,184,0.12);
+  color: #e5e7eb;
+  border: 1px solid rgba(148,163,184,0.6);
+}
+
+/* عنوان قسم السنة الثانية */
+.shift-subtitle {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 6px;
+}
+
+/* قائمة الأسماء */
+.shift-list {
+  list-style: none;
+}
+
+.shift-list li {
+  font-size: 13px;
+  color: #e5e7eb;
+  padding: 3px 0;
+}
+
+/* لا يوجد */
+.empty {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* اسم المقيم في الأعلى عند التفاصيل */
+.details-header {
+  font-size: 18px;
+  font-weight: 800;
+  color: #e5e7eb;
+  margin-bottom: 10px;
+}
+.details-sub {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-bottom: 14px;
+}
 </style>
 </head>
 
 <body>
 
-<h2>مناوبات السنة الأولى</h2>
+<div class="topbar">
+  <div class="topbar-title">لوحة مناوبات المقيمين</div>
+  <div class="topbar-badge">قسم الداخلية – جدول تفاعلي</div>
+</div>
 
-<div id="list"></div>
-<div id="details" style="display:none;"></div>
+<div class="container">
+  <h2>مناوبات السنة الأولى</h2>
+  <div class="subtitle">اختر مقيمًا لعرض جميع مناوباته ومن كان معه من السنة الثانية.</div>
+
+  <div id="list"></div>
+  <div id="details" style="display:none;"></div>
+</div>
 
 <script>
 let data = [];
 
-/* قاعدة بيانات أسماء */
+/* أسماء تقريبية لتحديد الجنس */
 const femaleNames = [
-  "فاطمة","سارة","ريم","نور","هبة","مها","رنا","لين","شهد","مريم","بتول","فرح","سلمى"
+  "فاطمة","سارة","ريم","نور","هبة","مها","رنا","لين","شهد","مريم","بتول","فرح","سلمى","فاطمة كادك"
 ];
 
 const maleNames = [
-  "غياث","عمر","أحمد","محمد","عبد","مصطفى","شاكر","ريان","أمير","قصاب","دهان","وفائي","كلارجي"
+  "غياث","عمر","أحمد","محمد","عبد","مصطفى","شاكر","ريان","أمير",
+  "قصاب","دهان","وفائي","كلارجي","اب","بكر","عبد الرحمن","أحمد حفار",
+  "محمد إبراهيم","مصطفى الشب","محمد طنب","عمر شيخ","عمر شيخ أمين"
 ];
 
-/* تحديد الجنس */
+/* إيموجي حسب الجنس */
 function getAvatar(name) {
   const first = name.split(" ")[0];
-
   if (femaleNames.includes(first)) return "👩‍⚕️";
   if (maleNames.includes(first)) return "👨‍⚕️";
+  return "🧑‍⚕️";
+}
 
-  return "🧑‍⚕️"; // محايد
+/* كلاس حسب الفرز */
+function getShiftClass(dept) {
+  if (dept === "اسعاف") return "er";
+  if (dept === "عناية") return "icu";
+  if (dept === "جناح") return "ward";
+  if (dept === "بارد") return "cold";
+  return "";
+}
+
+/* نص القسم */
+function getDeptLabel(dept) {
+  if (dept === "اسعاف") return "الإسعاف";
+  if (dept === "عناية") return "العناية المشددة";
+  if (dept === "جناح") return "الجناح";
+  if (dept === "بارد") return "البارد";
+  return dept || "";
 }
 
 async function loadExcel() {
@@ -155,12 +348,24 @@ function showResidents() {
   const names = [...new Set(firstYear.map(r => r['الأسماء']))];
 
   names.forEach(name => {
+    const shiftsForName = firstYear.filter(r => r['الأسماء'] === name);
     const card = document.createElement('div');
     card.className = "card";
+
     card.innerHTML = `
-      <div class="avatar">${getAvatar(name)}</div>
-      <strong>${name}</strong>
+      <div class="card-header">
+        <div class="avatar">${getAvatar(name)}</div>
+        <div>
+          <div class="card-name">${name}</div>
+          <div class="card-year">مقيم – سنة أولى</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tag">عدد المناوبات: ${shiftsForName.length}</div>
+        <div class="card-count">اضغط لعرض التفاصيل</div>
+      </div>
     `;
+
     card.onclick = () => showShifts(name);
     list.appendChild(card);
   });
@@ -174,17 +379,52 @@ function showShifts(name) {
 
   const back = document.createElement('button');
   back.className = "back-btn";
-  back.innerHTML = "رجوع";
+  back.innerHTML = "← رجوع إلى قائمة المقيمين";
   back.onclick = showResidents;
 
   details.innerHTML = "";
   details.appendChild(back);
 
+  const header = document.createElement('div');
+  header.className = "details-header";
+  header.innerHTML = `${getAvatar(name)} ${name}`;
+  details.appendChild(header);
+
+  const sub = document.createElement('div');
+  sub.className = "details-sub";
+  sub.innerHTML = "جميع المناوبات المسجّلة لهذا المقيم، مع عرض من كان معه من السنة الثانية في كل مناوبة.";
+  details.appendChild(sub);
+
+  const grid = document.createElement('div');
+  grid.className = "shifts-grid";
+  details.appendChild(grid);
+
   const shifts = data.filter(r => r['الأسماء'] === name && r['السنة'] === "أولى");
 
   shifts.forEach(r => {
     const card = document.createElement('div');
+    const cls = getShiftClass(r['الفرز']);
     card.className = "shift-card";
+
+    const top = document.createElement('div');
+    top.className = "shift-top";
+
+    const dateDiv = document.createElement('div');
+    dateDiv.className = "shift-date";
+    dateDiv.innerHTML = r['التاريخ'];
+
+    const deptDiv = document.createElement('div');
+    deptDiv.className = "shift-dept " + cls;
+    deptDiv.innerHTML = getDeptLabel(r['الفرز']);
+
+    top.appendChild(dateDiv);
+    top.appendChild(deptDiv);
+    card.appendChild(top);
+
+    const subtitle = document.createElement('div');
+    subtitle.className = "shift-subtitle";
+    subtitle.innerHTML = "معه من السنة الثانية:";
+    card.appendChild(subtitle);
 
     const sameDay = data.filter(x =>
       x['التاريخ'] === r['التاريخ'] &&
@@ -192,19 +432,23 @@ function showShifts(name) {
       x['السنة'] === "ثانية"
     );
 
-    let others = "";
-    sameDay.forEach(x => {
-      others += `<li>${x['الأسماء']}</li>`;
-    });
+    if (sameDay.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = "empty";
+      empty.innerHTML = "لا يوجد مقيمون من السنة الثانية في هذه المناوبة.";
+      card.appendChild(empty);
+    } else {
+      const ul = document.createElement('ul');
+      ul.className = "shift-list";
+      sameDay.forEach(x => {
+        const li = document.createElement('li');
+        li.innerHTML = `${getAvatar(x['الأسماء'])} ${x['الأسماء']}`;
+        ul.appendChild(li);
+      });
+      card.appendChild(ul);
+    }
 
-    card.innerHTML = `
-      <strong>${r['التاريخ']}</strong><br>
-      الفرز: ${r['الفرز']}<br><br>
-      <strong>معه من السنة الثانية:</strong>
-      <ul>${others || "<li>لا يوجد</li>"}</ul>
-    `;
-
-    details.appendChild(card);
+    grid.appendChild(card);
   });
 }
 
