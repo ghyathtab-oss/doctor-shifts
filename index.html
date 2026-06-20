@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>مناوبات الأطباء</title>
+
+  <!-- مكتبة قراءة Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      background:#f5f5f5;
+      padding:20px;
+      line-height: 1.7;
+    }
+    h2, h3 { margin-top: 30px; }
+    .card {
+      background:#fff;
+      padding:15px;
+      margin-bottom:15px;
+      border-radius:8px;
+      box-shadow:0 0 5px #ccc;
+    }
+    input, button {
+      padding:10px;
+      margin:5px 0;
+      font-size:16px;
+    }
+    button {
+      cursor:pointer;
+      background:#007bff;
+      color:white;
+      border:none;
+      border-radius:5px;
+    }
+    button:hover {
+      background:#0056b3;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>مناوبات الأطباء</h2>
+
+  <!-- بحث الطبيب -->
+  <h3>بحث حسب اسم الطبيب</h3>
+  <input id="doctor" placeholder="اكتب اسم الطبيب" />
+  <button onclick="searchDoctor()">بحث</button>
+
+  <!-- بحث الفرز -->
+  <h3>بحث حسب الفرز</h3>
+  <input id="ward" placeholder="مثال: إسعاف 1" />
+  <button onclick="searchWard()">بحث</button>
+
+  <div id="result"></div>
+
+  <script>
+    let data = [];
+
+    // تحميل ملف Excel من GitHub
+    async function loadExcel() {
+      const file = await fetch('shifts.xlsx');
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      data = XLSX.utils.sheet_to_json(sheet);
+    }
+
+    // بحث حسب الطبيب
+    function searchDoctor() {
+      const name = document.getElementById('doctor').value.trim();
+      const result = document.getElementById('result');
+      result.innerHTML = '';
+
+      if (!name) return;
+
+      const filtered = data.filter(row =>
+        row['الأسماء'] && row['الأسماء'].includes(name)
+      );
+
+      if (filtered.length === 0) {
+        result.innerHTML = `<p>لا توجد مناوبات للطبيب: ${name}</p>`;
+        return;
+      }
+
+      const grouped = {};
+
+      filtered.forEach(row => {
+        const key = row['التاريخ'] + '||' + row['الفرز'];
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(row);
+      });
+
+      Object.keys(grouped).forEach(key => {
+        const [date, ward] = key.split('||');
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        let html = `<h3>${date} — ${ward}</h3>`;
+
+        grouped[key].forEach(r => {
+          html += `<p><strong>السنة ${r['السنة']}:</strong> ${r['الأسماء']}</p>`;
+        });
+
+        card.innerHTML = html;
+        result.appendChild(card);
+      });
+    }
+
+    // بحث حسب الفرز
+    function searchWard() {
+      const ward = document.getElementById('ward').value.trim();
+      const result = document.getElementById('result');
+      result.innerHTML = '';
+
+      if (!ward) return;
+
+      const filtered = data.filter(row =>
+        row['الفرز'] && row['الفرز'].includes(ward)
+      );
+
+      if (filtered.length === 0) {
+        result.innerHTML = `<p>لا توجد مناوبات للفرز: ${ward}</p>`;
+        return;
+      }
+
+      const grouped = {};
+
+      filtered.forEach(row => {
+        const key = row['التاريخ'];
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(row);
+      });
+
+      Object.keys(grouped).forEach(date => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        let html = `<h3>📅 ${date}</h3>`;
+        html += `<h4>📍 ${ward}</h4>`;
+        html += `<hr>`;
+
+        grouped[date].forEach(r => {
+          html += `<p><strong>السنة ${r['السنة']}:</strong> ${r['الأسماء']}</p>`;
+        });
+
+        card.innerHTML = html;
+        result.appendChild(card);
+      });
+    }
+
+    loadExcel();
+  </script>
+
+</body>
+</html>
